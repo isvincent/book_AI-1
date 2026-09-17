@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 說書人小學堂</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- 引入 FontAwesome 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 隱藏的音效元素 -->
+    <audio id="clickSound" src="https://actions.google.com/sounds/v1/ui/button_click.ogg" preload="auto"></audio>
+    <audio id="msgSound" src="https://actions.google.com/sounds/v1/ui/state_change_confirm_up.ogg" preload="auto"></audio>
+
+    <!-- 登入畫面 -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <img src="https://cdn-icons-png.flaticon.com/512/3048/3048122.png" alt="Book Icon" class="bounce">
+            <h1>AI 說書人小學堂</h1>
+            <p>專為高中生打造的課外閱讀與思考空間</p>
+            <button id="loginBtn" class="btn-primary">
+                <i class="fab fa-google"></i> 使用 Google (Gemini) 帳號登入
+            </button>
+            <p class="note">✅ 登入後即可免費使用內建 Gemini AI，無需輸入 API Key！</p>
+        </div>
+    </div>
+
+    <!-- 主畫面 -->
+    <div id="mainScreen" class="screen">
+        <header>
+            <div class="logo">
+                <i class="fas fa-book-reader" style="color: #FF6D00;"></i> AI 說書人小學堂
+            </div>
+            <div class="user-info">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User Avatar" class="user-avatar">
+                <span id="userName">同學，歡迎學習！</span>
+                <button id="logoutBtn" class="btn-secondary"><i class="fas fa-sign-out-alt"></i> 登出</button>
+            </div>
+        </header>
+
+        <main class="container">
+            <!-- 影片播放區 -->
+            <section class="video-section card">
+                <h2><i class="fab fa-youtube" style="color: #FF0000;"></i> 精選說書影片清單</h2>
+                <div class="video-container">
+                    <iframe id="ytPlayer" src="https://www.youtube.com/embed/videoseries?list=PLRLj8B40-Dx0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="interactive-tip">
+                    <i class="fas fa-lightbulb fa-beat" style="color: #FFC107;"></i> 小提示：邊看影片可以邊向右側的 AI 助教提問喔！
+                </div>
+            </section>
+
+            <!-- AI 互動區 -->
+            <section class="ai-section card">
+                <h2><i class="fas fa-robot" style="color: #4285F4;"></i> Gemini AI 助教</h2>
+                <div class="chat-box" id="chatBox">
+                    <div class="message ai-message">
+                        <div class="avatar"><i class="fas fa-robot"></i></div>
+                        <div class="content">你好！我是你的 Gemini AI 助教。請問你對影片中介紹的書本有什麼疑問呢？我可以幫你整理重點、解釋觀念，或是探討書中的深層意義喔！</div>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <input type="text" id="userInput" placeholder="輸入你想問影片內容的問題 (例如：這本書的核心概念是什麼？)...">
+                    <button id="sendBtn" class="btn-primary" title="送出"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </section>
+
+            <!-- 學習歷程區 -->
+            <section class="history-section card">
+                <h2><i class="fas fa-chart-line" style="color: #34A853;"></i> 學習歷程紀錄</h2>
+                <ul id="historyList" class="history-list">
+                    <!-- 歷程紀錄動態加入於此 -->
+                </ul>
+                <button id="downloadHistoryBtn" class="btn-success"><i class="fas fa-download"></i> 下載學習歷程 (.txt)</button>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
