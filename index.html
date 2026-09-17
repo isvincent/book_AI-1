@@ -3,80 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 說書人小學堂</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- 引入 FontAwesome 圖示 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>說書小宇宙 - AI 伴讀趣</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <!-- 隱藏的音效元素 -->
-    <audio id="clickSound" src="https://actions.google.com/sounds/v1/ui/button_click.ogg" preload="auto"></audio>
-    <audio id="msgSound" src="https://actions.google.com/sounds/v1/ui/state_change_confirm_up.ogg" preload="auto"></audio>
-
-    <!-- 登入畫面 -->
-    <div id="loginScreen" class="screen active">
-        <div class="login-container">
-            <img src="https://cdn-icons-png.flaticon.com/512/3048/3048122.png" alt="Book Icon" class="bounce">
-            <h1>AI 說書人小學堂</h1>
-            <p>專為高中生打造的課外閱讀與思考空間</p>
-            <button id="loginBtn" class="btn-primary">
-                <i class="fab fa-google"></i> 使用 Google (Gemini) 帳號登入
-            </button>
-            <p class="note">✅ 登入後即可免費使用內建 Gemini AI，無需輸入 API Key！</p>
+<body class="bg-blue-50 font-sans min-h-screen flex flex-col overflow-x-hidden">
+    
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-purple-500 to-indigo-600 shadow-lg text-white p-4 sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-black tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-book-open-reader text-yellow-300"></i>
+                說書小宇宙
+            </h1>
+            
+            <div id="auth-section">
+                <!-- 未登入狀態 -->
+                <button id="login-btn" class="bg-white text-indigo-600 font-bold py-2 px-6 rounded-full shadow hover:bg-yellow-100 transition-colors flex items-center gap-2 transform hover:scale-105 active:scale-95 duration-200">
+                    <i class="fa-brands fa-google"></i>
+                    使用 Google 帳號登入
+                </button>
+                
+                <!-- 已登入狀態 -->
+                <div id="user-profile" class="hidden flex items-center gap-3">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix" alt="User Avatar" class="w-10 h-10 rounded-full bg-white border-2 border-yellow-300" id="user-avatar">
+                    <div class="hidden sm:block text-sm">
+                        <p class="font-bold">你好，同學！</p>
+                        <p class="text-indigo-200 text-xs">已連線至 Gemini AI</p>
+                    </div>
+                    <button id="logout-btn" class="text-sm bg-indigo-700 hover:bg-indigo-800 p-2 rounded-full transition-colors" title="登出">
+                        <i class="fa-solid fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- 主畫面 -->
-    <div id="mainScreen" class="screen">
-        <header>
-            <div class="logo">
-                <i class="fas fa-book-reader" style="color: #FF6D00;"></i> AI 說書人小學堂
-            </div>
-            <div class="user-info">
-                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User Avatar" class="user-avatar">
-                <span id="userName">同學，歡迎學習！</span>
-                <button id="logoutBtn" class="btn-secondary"><i class="fas fa-sign-out-alt"></i> 登出</button>
-            </div>
-        </header>
+    <!-- Main Content -->
+    <main class="container mx-auto flex-grow p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 relative">
+        
+        <!-- 未登入遮罩 -->
+        <div id="login-overlay" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-40 flex flex-col items-center justify-center rounded-xl m-4">
+            <i class="fa-solid fa-lock text-6xl text-indigo-300 mb-4 animate-bounce"></i>
+            <h2 class="text-2xl font-bold text-gray-700 mb-2">登入以解鎖所有功能</h2>
+            <p class="text-gray-500 mb-6 text-center px-4">請使用上方的登入按鈕連線至 Gemini AI，開始你的說書旅程！</p>
+        </div>
 
-        <main class="container">
-            <!-- 影片播放區 -->
-            <section class="video-section card">
-                <h2><i class="fab fa-youtube" style="color: #FF0000;"></i> 精選說書影片清單</h2>
-                <div class="video-container">
-                    <iframe id="ytPlayer" src="https://www.youtube.com/embed/videoseries?list=PLRLj8B40-Dx0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        <!-- Left Column: Video Player -->
+        <section class="flex flex-col gap-4">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col border-t-4 border-yellow-400">
+                <div class="bg-yellow-50 p-3 border-b border-yellow-100 flex justify-between items-center">
+                    <h2 class="font-bold text-yellow-800 flex items-center gap-2 text-lg">
+                        <i class="fa-brands fa-youtube text-red-500"></i>
+                        說書精選清單
+                    </h2>
                 </div>
-                <div class="interactive-tip">
-                    <i class="fas fa-lightbulb fa-beat" style="color: #FFC107;"></i> 小提示：邊看影片可以邊向右側的 AI 助教提問喔！
+                <!-- YouTube Iframe -->
+                <div class="aspect-video w-full bg-black relative" id="player-container">
+                    <div id="player"></div>
                 </div>
-            </section>
+                <div class="p-4 bg-gray-50">
+                    <p class="text-sm text-gray-600 mb-2">💡 點擊影片右上角的選單按鈕可以切換清單中的其他影片喔！</p>
+                    <button id="record-video-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-xl shadow transition-colors flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-check-circle"></i>
+                        我已經看完這部影片了
+                    </button>
+                </div>
+            </div>
 
-            <!-- AI 互動區 -->
-            <section class="ai-section card">
-                <h2><i class="fas fa-robot" style="color: #4285F4;"></i> Gemini AI 助教</h2>
-                <div class="chat-box" id="chatBox">
-                    <div class="message ai-message">
-                        <div class="avatar"><i class="fas fa-robot"></i></div>
-                        <div class="content">你好！我是你的 Gemini AI 助教。請問你對影片中介紹的書本有什麼疑問呢？我可以幫你整理重點、解釋觀念，或是探討書中的深層意義喔！</div>
+            <!-- Learning History -->
+            <div class="bg-white rounded-2xl shadow-xl p-4 flex flex-col h-full border-t-4 border-emerald-400">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-bold text-emerald-800 flex items-center gap-2 text-lg">
+                        <i class="fa-solid fa-medal text-yellow-500"></i>
+                        我的學習歷程
+                    </h2>
+                    <button id="download-history-btn" class="text-emerald-600 hover:text-emerald-800 text-sm font-bold flex items-center gap-1 p-2 bg-emerald-50 rounded-lg transition-colors">
+                        <i class="fa-solid fa-download"></i>
+                        下載歷程
+                    </button>
+                </div>
+                <div id="history-list" class="flex-grow overflow-y-auto max-h-40 space-y-2 text-sm text-gray-700 p-2 bg-gray-50 rounded-lg border border-gray-100">
+                    <!-- History items will go here -->
+                    <p class="text-gray-400 italic text-center py-4" id="empty-history-msg">尚未有紀錄，開始看影片和發問吧！</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: AI Chat -->
+        <section class="bg-white rounded-2xl shadow-xl flex flex-col h-[80vh] lg:h-auto border-t-4 border-purple-500">
+            <div class="bg-purple-50 p-3 border-b border-purple-100 flex justify-between items-center">
+                <h2 class="font-bold text-purple-800 flex items-center gap-2 text-lg">
+                    <i class="fa-solid fa-robot text-purple-600"></i>
+                    AI 伴讀小助手
+                </h2>
+                <button id="download-word-btn" class="text-purple-600 hover:text-purple-800 text-sm font-bold flex items-center gap-1 p-2 bg-purple-100 rounded-lg transition-colors" title="將對話下載為 Word 報告">
+                    <i class="fa-solid fa-file-word"></i>
+                    匯出 Word
+                </button>
+            </div>
+            
+            <!-- Chat Area -->
+            <div id="chat-box" class="flex-grow p-4 overflow-y-auto flex flex-col gap-4 bg-gray-50">
+                <!-- Welcome Message -->
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center text-white flex-shrink-0 shadow">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-gray-700 text-[16px] max-w-[85%] leading-relaxed border border-gray-100">
+                        哈囉！我是你的 AI 伴讀小助手 👋<br>
+                        關於剛才看過的影片，有什麼心得或是想問的問題嗎？不管是書裡的劇情、作者背景，還是想討論人生哲理，都可以問我喔！✨
                     </div>
                 </div>
-                <div class="input-area">
-                    <input type="text" id="userInput" placeholder="輸入你想問影片內容的問題 (例如：這本書的核心概念是什麼？)...">
-                    <button id="sendBtn" class="btn-primary" title="送出"><i class="fas fa-paper-plane"></i></button>
-                </div>
-            </section>
+            </div>
 
-            <!-- 學習歷程區 -->
-            <section class="history-section card">
-                <h2><i class="fas fa-chart-line" style="color: #34A853;"></i> 學習歷程紀錄</h2>
-                <ul id="historyList" class="history-list">
-                    <!-- 歷程紀錄動態加入於此 -->
-                </ul>
-                <button id="downloadHistoryBtn" class="btn-success"><i class="fas fa-download"></i> 下載學習歷程 (.txt)</button>
-            </section>
-        </main>
-    </div>
+            <!-- Input Area -->
+            <div class="p-4 bg-white border-t border-gray-100 rounded-b-2xl">
+                <form id="chat-form" class="flex gap-2">
+                    <input type="text" id="chat-input" class="flex-grow bg-gray-100 border border-gray-200 text-gray-800 text-[16px] rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all shadow-inner" placeholder="輸入你想問的問題..." autocomplete="off">
+                    <button type="submit" id="send-btn" class="bg-purple-600 hover:bg-purple-700 text-white rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0 shadow-lg transform hover:scale-105 active:scale-95 transition-all">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
 
-    <script src="script.js"></script>
+    <!-- 音效資源 -->
+    <audio id="sound-click" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b820a665.mp3?filename=click-button-140881.mp3" preload="auto"></audio>
+    <audio id="sound-receive" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=success-1-6297.mp3" preload="auto"></audio>
+    <audio id="sound-achievement" src="https://cdn.pixabay.com/download/audio/2021/08/09/audio_82c5f105bb.mp3?filename=level-up-191997.mp3" preload="auto"></audio>
+
+    <!-- Scripts -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="app.js"></script>
 </body>
 </html>
